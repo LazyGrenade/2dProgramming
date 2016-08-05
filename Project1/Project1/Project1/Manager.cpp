@@ -1,14 +1,16 @@
 #include <fstream>
-#include <SDL_image.h>
 #include <sstream>
+#include <SDL_image.h>
 #include <stdio.h>
 
 #include "Manager.h"
 
-namespace {
+namespace
+{
 	std::vector<std::string> split(std::string metadata)
 	{
 		std::istringstream in(metadata);
+
 		std::vector<std::string> result;
 		std::string token;
 
@@ -19,6 +21,7 @@ namespace {
 		return result;
 	}
 }
+
 SDL_Window* 	Manager::window = nullptr;
 SDL_Renderer*	Manager::renderer = nullptr;
 
@@ -27,8 +30,8 @@ Manager::Manager(void)
 	, mouse_pos(0, 0)
 	, player(nullptr)
 	, background(nullptr)
-	, screenWidth(SCREEN_WIDTH)
-	, screenHeight(SCREEN_HEIGHT)
+	, screenwidth(SCREEN_WIDTH)
+	, screenheight(SCREEN_HEIGHT)
 {
 }
 
@@ -68,6 +71,7 @@ bool Manager::LoadLevel(std::string levelfile)
 
 	std::string type, file, name;
 	int x, y, w, h;
+	int speed;
 
 	while (!in.eof())
 	{
@@ -82,9 +86,9 @@ bool Manager::LoadLevel(std::string levelfile)
 			//objs.insert("bg", new GameObject);
 			//objs["bg"]->Init(file);
 		}
-		else if (type == "Object" || type == "player")
+		else if (type == "Object" || type == "Player")
 		{
-			in >> name >> file >> x >> y >> w >> h;
+			in >> name >> speed >> file >> x >> y >> w >> h;
 			objs[name] = new GameObject;
 			//objs.insert( name, new GameObject );
 			objs[name]->Init(file);
@@ -92,12 +96,15 @@ bool Manager::LoadLevel(std::string levelfile)
 			objs[name]->position.y = (float)y;
 			objs[name]->pos.w = (float)w;
 			objs[name]->pos.h = (float)h;
-			if (type == "player")
+			objs[name]->speed = speed;
+
+			if (player == nullptr)
 				player = objs[name];
 
 			std::string metadata;
 			getline(in, metadata);
-			ApplyMetaData(objs[name], metadata);
+
+			ApplyMetadata(objs[name], metadata);
 		}
 		else if (type == "Nextlevel")
 		{
@@ -108,25 +115,7 @@ bool Manager::LoadLevel(std::string levelfile)
 	in.close();
 	return true;
 }
-void Manager::ApplyMetaData(GameObject* obj, std::string metadata)
-{
-	std::vector<std::string> data = split(metadata);
-	for (int i = 0; i < data.size(); ++i)
-	{
-		if (data[i] == "Follow")
-		{
-			std::string target = data[i + 1];
-			std::string distance = data[i + 2];
-			std::string angle = data[i + 3];
-			obj->target = objs[target];
-			
-			obj->offset.r = stof(distance);
-			obj->offset.th = stof(angle);
-			i += 3;
-			
-		}
-	}
-}
+
 bool Manager::Update()
 {
 	if (!KeyUpdate())
@@ -139,20 +128,27 @@ bool Manager::Update()
 
 	player->position = mouse_pos;
 
+
 	SDL_RenderClear(renderer);
 	SDL_RenderCopy(renderer, background, nullptr, nullptr);
 
 	for (ObjectByName::value_type& objByName : objs)
 	{
 		GameObject* obj = objByName.second;
-		obj->Move(keys);// i == 0 ? keys : 0);
-		obj->Update();
+		if (obj)
+		{
+			obj->Move(keys);// i == 0 ? keys : 0);
+			obj->Update();
+		}
 	}
 
 	for (ObjectByName::value_type& objByName : objs)
 	{
 		GameObject* obj = objByName.second;
-		obj->Render();
+		if (obj)
+		{
+			obj->Render();
+		}
 	}
 
 	SDL_RenderPresent(renderer);
@@ -172,6 +168,7 @@ void Manager::Close()
 	IMG_Quit();
 	SDL_Quit();
 }
+
 
 SDL_Texture* Manager::LoadTexture(std::string filename, SDL_Rect* offset)
 {
@@ -197,14 +194,44 @@ SDL_Texture* Manager::LoadTexture(std::string filename, SDL_Rect* offset)
 	return texture;
 }
 
-void Manager::RenderTexture(SDL_Texture* texture, SDL_Rect* clip, SDL_Rect* offset)
-{
-	SDL_RenderCopy(renderer, texture, clip, offset);
-}
 void Manager::RenderTextureEx(SDL_Texture* texture, SDL_Rect* clip, SDL_Rect* offset, float angle, SDL_Point* rotationPoint)
 {
 	SDL_RenderCopyEx(renderer, texture, clip, offset, angle, rotationPoint, SDL_FLIP_NONE);
 }
+
+void Manager::RenderTexture(SDL_Texture* texture, SDL_Rect* clip, SDL_Rect* offset)
+{
+	SDL_RenderCopy(renderer, texture, clip, offset);
+}
+
+
+
+void Manager::ApplyMetadata(GameObject* obj, std::string metadata)
+{
+	std::vector<std::string> data = split(metadata);
+
+	for (int i = 0; i < data.size(); i++)
+	{
+		if (data[i] == "Follow")
+		{
+			std::string target = data[i + 1];
+			std::string distance = data[i + 2];
+			std::string angle = data[i + 3];
+			obj->target = objs[target];
+
+			obj->offset.r = stof(distance);
+			obj->offset.th = stof(angle);
+
+			i += 3;
+
+			obj->targetPoint = new SDL_Point();
+
+		}
+	}
+
+}
+
+
 bool Manager::KeyUpdate()
 {
 	int x, y;
@@ -315,6 +342,7 @@ bool Manager::KeyUp(SDL_Keycode key)
 	case SDLK_SPACE:
 		keys &= ~KEYS::SPACE;
 		break;
+
 	}
 
 	return true;

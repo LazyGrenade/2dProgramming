@@ -1,5 +1,5 @@
 #include <SDL.h>
-#include <unordered_map>
+#include <map>
 
 #include "helper.h"
 #include "GameObject.h"
@@ -31,7 +31,10 @@ public:
 	static SDL_Renderer*	renderer;
 
 private:
-	void ApplyMetaData(GameObject* obj, std::string metadata);
+
+	void ApplyMetadata(GameObject* obj, std::string metadata);
+
+
 	bool KeyUpdate();
 	bool KeyDown(SDL_Keycode key);
 	bool KeyUp(SDL_Keycode key);
@@ -42,13 +45,14 @@ private:
 	Vector2 mouse_pos;
 
 	std::string nextlevel;
-	typedef std::unordered_map<std::string, GameObject*> ObjectByName;
+	typedef std::map<std::string, GameObject*> ObjectByName;
 	ObjectByName objs;
 
 	GameObject* player;
 
 	SDL_Texture* background;
 
-	const Uint32 screenWidth;
-	const Uint32 screenHeight;
+	const Uint32 screenwidth;
+	const Uint32 screenheight;
 };
+

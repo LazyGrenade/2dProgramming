@@ -36,14 +36,13 @@ public:
 protected:
 	virtual void UpdateAnimation();
 	virtual void FollowTarget();
-
-
 	PhysicsObject* phys_obj;
-
-	string name;
 
 	GameObject* target;
 	Vector2 offset;
+	enum class TargetBehavior {
+		NONE, FOLLOW, ORBIT
+	} target_behavior;
 
 	SDL_Point* targetPoint;
 
@@ -51,21 +50,25 @@ protected:
 	SDL_Texture* img;
 	SDL_Rect	 pos;
 
-	float rotationSpeed;
+	string name;
 	float angle;
 	float mass;
+	float roatationSpeed;
 	Vector2 position;
 	Vector2 velocity;
 	Vector2 accel;
+
 
 	//animation stuff
 	SDL_Rect	 clip;
 	int			 frame;
 
 	string state;
+	float speed;
 
 	//timer
 	Uint32		prev;
 	double		dt;
 	double		timer;
 };
+

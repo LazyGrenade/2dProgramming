@@ -17,10 +17,11 @@ namespace KEYS
 //pixel coordinates
 struct Vector2
 {
-	Vector2(): r(x), th(y) { }
-	Vector2(float xx, float yy) : x(xx), y(yy) { }
-	Vector2(const Vector2& a) : x(a.x), y(a.y) { }
-
+	Vector2() : r(x), th(y) {}
+	Vector2(float xx, float yy) : x(xx), y(yy), r(x), th(x) { }
+	Vector2(const Vector2& a) : x(a.x), y(a.y), r(y), th(y) { }
+	Vector2 Normalize();
+	float Magnitude();
 	Vector2 operator=(const Vector2 &b)
 	{
 		x = b.x; y = b.y;
@@ -32,6 +33,20 @@ struct Vector2
 	float& r;
 	float& th;
 };
+
+
+inline float Vector2::Magnitude()
+{
+	return sqrt((x * x) + (y * y));
+}
+
+inline Vector2 Vector2::Normalize()
+{
+	Vector2 result;
+	result.x = x /= Magnitude();
+	result.y = y /= Magnitude();
+	return result;
+}
 
 static Vector2 operator+(const Vector2 &a, const Vector2 &b)
 {
@@ -72,6 +87,7 @@ static Vector2 operator/(const Vector2 &a, float c)
 	result.y /= c;
 	return result;
 }
+
 
 static Vector2 operator+=(Vector2 &LHS, const Vector2 &RHS)
 {

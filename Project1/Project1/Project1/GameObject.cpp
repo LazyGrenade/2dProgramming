@@ -6,12 +6,13 @@
 #include "Manager.h"
 
 GameObject::GameObject(void)
-	: active(true)
-	, target(nullptr)
-	, targetPoint(nullptr)
+	: target(nullptr)
+	, active(true)
 	, surf(nullptr)
 	, img(nullptr)
-	, rotationSpeed(100)
+	, angle(0)
+	, targetPoint(nullptr)
+	, roatationSpeed(100)
 	, pos({ 0,0,0,0 })
 	, position(0, 0)
 	, velocity(0, 0)
@@ -21,23 +22,6 @@ GameObject::GameObject(void)
 	, prev(0)
 	, timer(0)
 {
-}
-
-void GameObject::FollowTarget()
-{
-	if (target == nullptr)
-		return;
-
-	float angle = 180 * SDL_GetTicks() / 1000.0f;
-	float rotate_angle = (offset.th + angle) * M_PI / 180;
-
-	Vector2 center = position + Vector2(clip.w, clip.h) / 2;
-	Vector2 target_pivot = target->position + Vector2(target->clip.w, target->clip.h) / 2;
-
-	center.x = offset.r * cos(rotate_angle) + target_pivot.x;
-	center.y = offset.r * sin(rotate_angle) + target_pivot.y;
-
-	position = center - Vector2(pos.w, pos.h) / 2;
 }
 
 GameObject::~GameObject(void)
@@ -59,38 +43,39 @@ bool GameObject::Update()
 	timer += dt;
 	prev = now;
 
-	angle += rotationSpeed * dt;
-
 	if (!active)
 		return false;
-	if (target) {
-		/*position = target->position;
-		position.x += 48;*/
 
-		targetPoint->x = target->position.x + (target->pos.w / 2.0f);
-		targetPoint->y = target->position.y + (target->pos.h / 2.0f);
-		targetPoint->x = target->position.x;
-		targetPoint->y = target->position.y;
-		/*targetPoint->x = target->pos.w / 2.0f;
-		targetPoint->y = target->pos.h / 2.0f;
-		float followSpeed = 1.0f;
-		if (name == "box")
-		{
-		followSpeed = 2.0f;
-		}
-		else if(name == "bullet")
-		{
-		followSpeed = 1.25f;
-		}
-		Vector2 vecToTarget = target->position - position;
-		Vector2 dirToTarget = vecToTarget.Normalize();
-		if (vecToTarget = vecToTarget.Magnitude() > 40 * followSpeed) {
-		position += dirToTarget * followSpeed;
-		}*/
-	}
+	FollowTarget();
+
+	//angle += roatationSpeed * dt;
+
+
 	UpdateAnimation();
 
 	return false;
+}
+void GameObject::FollowTarget()
+{
+	if (target == nullptr)
+		return;
+
+	target_behavior = TargetBehavior::NONE;
+
+	float angle = 180 * SDL_GetTicks() / 1000.0f;
+	float rotate_angle = (offset.th + angle) * M_PI / 180;
+
+
+	Vector2 target_pivot = target->position + Vector2(target->pos.w, target->pos.h) / 2;
+
+
+
+	Vector2 center;
+	center.x = offset.r * cos(rotate_angle) + target_pivot.x;
+	center.y = offset.r * sin(rotate_angle) + target_pivot.y;
+
+	position = center - Vector2(pos.w, pos.h) / 2;
+
 }
 
 void GameObject::Render()
@@ -98,7 +83,10 @@ void GameObject::Render()
 	pos.x = (int)position.x;
 	pos.y = (int)position.y;
 	if (active)
-		Manager::RenderTextureEx(img, nullptr, &pos, angle, targetPoint);
+	{
+		Manager::RenderTextureEx(img, nullptr, &pos, angle, nullptr);
+	}
+
 }
 
 void GameObject::Move(int direction)

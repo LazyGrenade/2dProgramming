@@ -1,5 +1,5 @@
 bg images/12.png
-player			images/mario_box.jpg 	0 0 	32 32
-Object trap		images/trap.png		128 128	32 32 Follow box
-Object bullet		images/bullet.png	256 256	10 10
+player box		200	images/mario_box.jpg 	0 0 	32 32
+Object trap		200	images/trap.png		128 128	32 32 Follow box 10 50
+Object bullet		200	images/bullet.png	256 256	10 10
 Nextlevel level2.txt
