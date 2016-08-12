@@ -1,7 +1,10 @@
 #pragma once
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+#include <vector>
+#include <unordered_map>
+
+const int SCREEN_WIDTH = 1024;
+const int SCREEN_HEIGHT = 768;
 
 //keys
 namespace KEYS
@@ -9,10 +12,15 @@ namespace KEYS
 	enum {
 		NONE = 0,
 		MOUSE0 = 1 << 1, MOUSE1 = 1 << 2, UP = 1 << 3, DOWN = 1 << 4,
-		LEFT = 1 << 5, RIGHT = 1 << 6, SPACE = 1 << 7
+		LEFT = 1 << 5, RIGHT = 1 << 6, SPACE = 1 << 7, P = 1 << 8, K = 1 << 9
 	};
-	const int NUMKEYS = 7;
+	const int NUMKEYS = 9;
 }
+
+// Combos Stuff
+typedef std::vector<int> Keys;
+typedef std::pair<Keys, std::string> Combo;
+typedef std::vector<Combo> Combos;
 
 //pixel coordinates
 struct Vector2

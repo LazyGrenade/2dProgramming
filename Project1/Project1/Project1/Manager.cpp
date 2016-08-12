@@ -22,6 +22,8 @@ namespace
 	}
 }
 
+std::vector<int>	Manager::inputHistory;
+
 SDL_Window* 	Manager::window = nullptr;
 SDL_Renderer*	Manager::renderer = nullptr;
 
@@ -126,7 +128,7 @@ bool Manager::Update()
 	if (keys & KEYS::LEFT) {}
 	if (keys & KEYS::RIGHT) {}
 
-	player->position = mouse_pos;
+	//player->position = mouse_pos;
 
 
 	SDL_RenderClear(renderer);
@@ -204,7 +206,37 @@ void Manager::RenderTexture(SDL_Texture* texture, SDL_Rect* clip, SDL_Rect* offs
 	SDL_RenderCopy(renderer, texture, clip, offset);
 }
 
+bool Manager::match(const Keys & input, const Keys & move, int threshold)
+{
+	int input_size = input.size();
+	int move_size = move.size();
 
+	if (input_size < move_size)
+		return false;
+
+	int mismatch = 0;
+	
+	int i = input_size - 1;
+	int j = move_size - 1;
+
+	for ( ; i >= 0 && j >= 0; --i)
+	{
+		if (input[i] != move[j])
+			++mismatch;
+		else
+		{
+			mismatch = 0;
+			--j;
+		}
+
+		if (mismatch >= threshold)
+			return false;
+
+		if (mismatch >= threshold)
+			return false;
+	}
+	return (i >= 0);
+}
 
 void Manager::ApplyMetadata(GameObject* obj, std::string metadata)
 {
@@ -306,6 +338,13 @@ bool Manager::KeyDown(SDL_Keycode key)
 	case SDLK_SPACE:
 		keys |= KEYS::SPACE;
 		break;
+	
+	case 'p':
+		keys |= KEYS::P;
+		break;
+
+	case 'k':
+		keys |= KEYS::K;
 	}
 
 	return true;
@@ -343,6 +382,9 @@ bool Manager::KeyUp(SDL_Keycode key)
 		keys &= ~KEYS::SPACE;
 		break;
 
+	case 'p':
+		keys &= ~KEYS::P;
+		break;
 	}
 
 	return true;

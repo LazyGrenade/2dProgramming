@@ -1,7 +1,7 @@
 #include "Source.h"
 #include <string>
 #include <vector>
-
+#include <iostream>
 
 Source::Source()
 {
@@ -19,6 +19,8 @@ enum Key {
 };
 
 typedef std::vector<Key> Keys;
+typedef std::pair<Keys, std::string> Combo;
+typedef std::vector<Combo> Combos;
 
 bool match(const Keys& input, const Keys& move, int threshold = 1)
 {
@@ -69,35 +71,41 @@ int main()
 	const Keys r_dragonpunch = { R, D, R, P };
 	const Keys r_hurricanekick = { D, R, K };
 
+	const Combos comboList = {
+		Combo(r_fireball, "FireBall"),
+		Combo(r_dragonpunch, "DragonPunch"),
+		Combo(r_hurricanekick, "HurricaneKick")
+	};
+
 	Keys input_history;
 
 	char input;
 	do {
 		std::cin >> input;
-	}
 
-	switch (input)
-	{
-	case 'w':
-		input_history.push_back(Key::U);
-		break;
-	case 'a':
-		input_history.push_back(Key::L);
-		break;
-	case 's':
-		input_history.push_back(Key::D);
-		break;
-	case 'e':
-		input_history.push_back(Key::R);
-		break;
-	case 'p':
-		input_history.push_back(Key::P);
-		break;
-	case 'k':
-		input_history.push_back(Key::K);
-		break;
-	}
 
+		switch (input)
+		{
+		case 'w':
+			input_history.push_back(Key::U);
+			break;
+		case 'a':
+			input_history.push_back(Key::L);
+			break;
+		case 's':
+			input_history.push_back(Key::D);
+			break;
+		case 'd':
+			input_history.push_back(Key::R);
+			break;
+		case 'p':
+			input_history.push_back(Key::P);
+			break;
+		case 'k':
+			input_history.push_back(Key::K);
+			break;
+		}
+	} while (input != 0);
 
 	if (match(input_history, r_dragonpunch, 1))
 	{
@@ -112,4 +120,5 @@ int main()
 		std::cout << "I'D LIKE SOME POUND CAKE!!" << std::endl;
 	}
 }
+
 

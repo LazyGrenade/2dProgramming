@@ -11,6 +11,8 @@ namespace MANAGERERROR
 	enum { SDL_INITFAIL = -10, IMG_INITFAIL, TTF_INITFAIL, WINDOW_INITFAIL };
 }
 
+
+
 class Manager
 {
 public:
@@ -30,6 +32,9 @@ public:
 	static SDL_Window*		window;
 	static SDL_Renderer*	renderer;
 
+	static std::vector<int> inputHistory;
+
+	static bool match(const Keys& input, const Keys& move, int threshold = 1);
 private:
 
 	void ApplyMetadata(GameObject* obj, std::string metadata);

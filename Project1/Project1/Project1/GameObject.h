@@ -12,6 +12,8 @@ class Manager;
 class PhysicsObject;
 class PhysicsManager;
 
+enum ComboType { NONE = 0, FIREBALL = 2, };
+
 //GameObject class
 class GameObject
 {
@@ -34,6 +36,9 @@ public:
 	bool active;
 
 protected:
+
+	ComboType comboType;
+
 	virtual void UpdateAnimation();
 	virtual void FollowTarget();
 	PhysicsObject* phys_obj;

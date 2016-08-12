@@ -22,6 +22,7 @@ GameObject::GameObject(void)
 	, prev(0)
 	, timer(0)
 {
+	comboType = NONE;
 }
 
 GameObject::~GameObject(void)
@@ -43,13 +44,52 @@ bool GameObject::Update()
 	timer += dt;
 	prev = now;
 
+	const Keys r_fireball = { KEYS::DOWN, KEYS::RIGHT, KEYS::P};
+	const Keys r_dragonpunch = { KEYS::RIGHT, KEYS::DOWN, KEYS::RIGHT, KEYS::P};
+	const Keys r_hurricanekick = { KEYS::DOWN, KEYS::RIGHT, KEYS::K };
+
+	const Combos comboList = {
+		Combo(r_fireball, "FireBall"),
+		Combo(r_dragonpunch, "DragonPunch"),
+		Combo(r_hurricanekick, "HurricaneKick") };
+
 	if (!active)
 		return false;
 
 	FollowTarget();
 
 	//angle += roatationSpeed * dt;
+	
+	
+	for (const Combo& moveToAction : comboList) 
+	{
+		const Keys& move = moveToAction.first;
+		const std::string& action = moveToAction.second;
+		
+		if (Manager::inputHistory.size() >= move.size())
+		{
+			if (Manager::match(Manager::inputHistory, move, 10))
+			{
+				std::cout << action << std::endl;
+				if (action == "FireBall")
+					comboType = FIREBALL;
 
+				break;
+			}
+		}
+	}
+
+	switch (comboType)
+	{
+	case FIREBALL:
+		cout << "Fire Ball" << endl;
+		Manager::inputHistory.clear();
+		system("pause");
+		break;
+
+	default:
+		cout << "nothing" << endl;
+	}
 
 	UpdateAnimation();
 
@@ -92,10 +132,30 @@ void GameObject::Render()
 void GameObject::Move(int direction)
 {
 	//Enter movement logic here
-	if (direction & KEYS::UP) {}
-	if (direction & KEYS::DOWN) {}
-	if (direction & KEYS::LEFT) {}
-	if (direction & KEYS::RIGHT) {}
+	if (direction & KEYS::UP) 
+	{
+		Manager::inputHistory.push_back(direction);
+		position = Vector2(0.0f, -1.0f) * 80.0f * dt + position;
+	}
+	if (direction & KEYS::DOWN) 
+	{
+		Manager::inputHistory.push_back(direction);
+		position = Vector2(0.0f, 1.0f) * 80.0f * dt + position;
+	}
+	if (direction & KEYS::LEFT) 
+	{
+		Manager::inputHistory.push_back(direction);
+		position = Vector2(-1.0f, 0.0f) * 80.0f * dt + position;
+	}
+	if (direction & KEYS::RIGHT) 
+	{
+		Manager::inputHistory.push_back(direction);
+		position = Vector2(1.0f, 0.0f) * 80.0f * dt + position;
+	}
+	if (direction & KEYS::P)
+	{
+		Manager::inputHistory.push_back(direction);
+	}
 }
 
 void GameObject::UpdateAnimation()
