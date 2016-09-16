@@ -1,0 +1,7 @@
+﻿  Manager.cpp
+c:\users\student\desktop\week1\week1\manager.cpp(95): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\student\desktop\week1\week1\manager.cpp(96): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\student\desktop\week1\week1\manager.cpp(140): warning C4244: 'argument': conversion from 'const int' to 'float', possible loss of data
+c:\users\student\desktop\week1\week1\manager.cpp(149): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\student\desktop\week1\week1\manager.cpp(285): warning C4018: '<': signed/unsigned mismatch
+  Week1.vcxproj -> C:\Users\student\Desktop\Week1\Debug\Week1.exe

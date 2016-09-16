@@ -1,0 +1,5 @@
+bg images/nebula0.jpg
+Player box		images/mario_box.jpg	0 0 	32 32
+Trap trap		images/trap.png			128 128	32 32	Follow box 175 0
+Bullet bullet	images/bullet.png		256 256	10 10	Follow trap 75 -26 
+Nextlevel level2.txt
